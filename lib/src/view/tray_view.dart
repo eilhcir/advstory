@@ -187,31 +187,33 @@ class _TrayViewState extends State<TrayView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return _trayAnimationManager ??= TrayAnimationManager(
-      child: List.generate(widget.controller.storyCount, (index) {
-        if (widget.buildStoryOnTrayScroll) {
-          widget.buildHelper.prepareStory(index);
-        }
+      child: Row(
+        children: List.generate(widget.controller.storyCount, (index) {
+          if (widget.buildStoryOnTrayScroll) {
+            widget.buildHelper.prepareStory(index);
+          }
 
-        Widget tray = widget.trayBuilder(index);
-        if (tray is AnimatedTray) {
-          tray = TrayPositionProvider(
-            index: index,
-            child: tray,
+          Widget tray = widget.trayBuilder(index);
+          if (tray is AnimatedTray) {
+            tray = TrayPositionProvider(
+              index: index,
+              child: tray,
+            );
+          }
+
+          return GestureDetector(
+            onTap: () => _handleTrayTap(
+              context: context,
+              tray: tray,
+              index: index,
+            ),
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: widget.style.trayListStyle.spacing),
+              child: tray,
+            ),
           );
-        }
-
-        return GestureDetector(
-          onTap: () => _handleTrayTap(
-            context: context,
-            tray: tray,
-            index: index,
-          ),
-          child: Container(
-            margin: EdgeInsets.symmetric(horizontal: widget.style.trayListStyle.spacing),
-            child: tray,
-          ),
-        );
-      }),
+        }),
+      ),
       // child: ListView.separated(
       //   padding: widget.style.trayListStyle.padding,
       //   scrollDirection: widget.style.trayListStyle.direction,
