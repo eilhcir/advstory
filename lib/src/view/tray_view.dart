@@ -187,41 +187,66 @@ class _TrayViewState extends State<TrayView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return _trayAnimationManager ??= TrayAnimationManager(
-      child: ListView.separated(
-        padding: widget.style.trayListStyle.padding,
-        scrollDirection: widget.style.trayListStyle.direction,
-        itemCount: widget.controller.storyCount,
-        itemBuilder: (context, index) {
-          if (widget.buildStoryOnTrayScroll) {
-            widget.buildHelper.prepareStory(index);
-          }
+      child: List.generate(widget.controller.storyCount, (index) {
+        if (widget.buildStoryOnTrayScroll) {
+          widget.buildHelper.prepareStory(index);
+        }
 
-          Widget tray = widget.trayBuilder(index);
-          if (tray is AnimatedTray) {
-            tray = TrayPositionProvider(
-              index: index,
-              child: tray,
-            );
-          }
-
-          return GestureDetector(
-            onTap: () => _handleTrayTap(
-              context: context,
-              tray: tray,
-              index: index,
-            ),
+        Widget tray = widget.trayBuilder(index);
+        if (tray is AnimatedTray) {
+          tray = TrayPositionProvider(
+            index: index,
             child: tray,
           );
-        },
-        separatorBuilder: (context, index) => SizedBox(
-          width: widget.style.trayListStyle.direction == Axis.vertical
-              ? 0
-              : widget.style.trayListStyle.spacing,
-          height: widget.style.trayListStyle.direction == Axis.horizontal
-              ? 0
-              : widget.style.trayListStyle.spacing,
-        ),
-      ),
+        }
+
+        return GestureDetector(
+          onTap: () => _handleTrayTap(
+            context: context,
+            tray: tray,
+            index: index,
+          ),
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: widget.style.trayListStyle.spacing),
+            child: tray,
+          ),
+        );
+      }),
+      // child: ListView.separated(
+      //   padding: widget.style.trayListStyle.padding,
+      //   scrollDirection: widget.style.trayListStyle.direction,
+      //   itemCount: widget.controller.storyCount,
+      //   itemBuilder: (context, index) {
+      //     if (widget.buildStoryOnTrayScroll) {
+      //       widget.buildHelper.prepareStory(index);
+      //     }
+
+      //     Widget tray = widget.trayBuilder(index);
+      //     if (tray is AnimatedTray) {
+      //       tray = TrayPositionProvider(
+      //         index: index,
+      //         child: tray,
+      //       );
+      //     }
+
+      //     return GestureDetector(
+      //       onTap: () => _handleTrayTap(
+      //         context: context,
+      //         tray: tray,
+      //         index: index,
+      //       ),
+      //       child: tray,
+      //     );
+      //   },
+      //   separatorBuilder: (context, index) => SizedBox(
+      //     width: widget.style.trayListStyle.direction == Axis.vertical
+      //         ? 0
+      //         : widget.style.trayListStyle.spacing,
+      //     height: widget.style.trayListStyle.direction == Axis.horizontal
+      //         ? 0
+      //         : widget.style.trayListStyle.spacing,
+      //   ),
+      // ),
     );
   }
 }
