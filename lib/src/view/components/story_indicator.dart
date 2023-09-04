@@ -91,14 +91,17 @@ class StoryIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     _generateIndicators();
 
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: style.padding,
-        child: SizedBox(
-          width: double.maxFinite,
-          height: style.height,
-          child: Row(children: _indicators),
+    return SafeArea(
+      top: false,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: style.padding,
+          child: SizedBox(
+            width: double.maxFinite,
+            height: style.height,
+            child: Row(children: _indicators),
+          ),
         ),
       ),
     );
