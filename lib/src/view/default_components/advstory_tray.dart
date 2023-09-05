@@ -46,6 +46,7 @@ class AdvStoryTray extends AnimatedTray {
     this.strokeWidth = 2,
     this.animationDuration = const Duration(milliseconds: 1200),
     double? borderRadius,
+    this.errorWidget,
   })  : assert(
           (() => shape == BoxShape.circle ? size.width == size.height : true)(),
           'Size width and height must be equal for a circular tray',
@@ -54,9 +55,7 @@ class AdvStoryTray extends AnimatedTray {
           borderGradientColors.length >= 2,
           'At least 2 colors are required for tray border gradient',
         ),
-        borderRadius = shape == BoxShape.circle
-            ? size.width
-            : borderRadius ?? size.width / 10,
+        borderRadius = shape == BoxShape.circle ? size.width : borderRadius ?? size.width / 10,
         super(key: key);
 
   /// Image url that shown as tray.
@@ -91,13 +90,15 @@ class AdvStoryTray extends AnimatedTray {
   /// Rotate animation duration of the border.
   final Duration animationDuration;
 
+  /// Error widget
+  final Widget? errorWidget;
+
   @override
   AnimatedTrayState<AdvStoryTray> createState() => _AdvStoryTrayState();
 }
 
 /// State of the [AdvStoryTray] widget.
-class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray>
-    with TickerProviderStateMixin {
+class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray> with TickerProviderStateMixin {
   late final _rotationController = AnimationController(
     vsync: this,
     duration: widget.animationDuration,
@@ -172,9 +173,7 @@ class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray>
                 painter: AnimatedBorderPainter(
                   gradientColors: _gradientColors,
                   gapSize: widget.gapSize,
-                  radius: widget.shape == BoxShape.circle
-                      ? widget.size.width
-                      : widget.borderRadius,
+                  radius: widget.shape == BoxShape.circle ? widget.size.width : widget.borderRadius,
                   strokeWidth: widget.strokeWidth,
                   animation: CurvedAnimation(
                     parent: Tween(begin: 0.0, end: 1.0).animate(
@@ -195,10 +194,8 @@ class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray>
                   ),
                   child: Image.network(
                     widget.url,
-                    width: widget.size.width -
-                        (widget.gapSize + widget.strokeWidth) * 2,
-                    height: widget.size.height -
-                        (widget.gapSize + widget.strokeWidth) * 2,
+                    width: widget.size.width - (widget.gapSize + widget.strokeWidth) * 2,
+                    height: widget.size.height - (widget.gapSize + widget.strokeWidth) * 2,
                     fit: BoxFit.cover,
                     frameBuilder: (context, child, frame, _) {
                       return frame != null
@@ -206,8 +203,7 @@ class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray>
                               tween: Tween<double>(begin: .1, end: 1),
                               curve: Curves.ease,
                               duration: const Duration(milliseconds: 300),
-                              builder:
-                                  (BuildContext context, double opacity, _) {
+                              builder: (BuildContext context, double opacity, _) {
                                 return Opacity(
                                   opacity: opacity,
                                   child: child,
@@ -217,7 +213,7 @@ class _AdvStoryTrayState extends AnimatedTrayState<AdvStoryTray>
                           : Shimmer(style: widget.shimmerStyle);
                     },
                     errorBuilder: (_, __, ___) {
-                      return const Icon(Icons.error);
+                      return widget.errorWidget ?? const Icon(Icons.error);
                     },
                   ),
                 ),
