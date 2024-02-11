@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_cache_manager: ^3.3.0
-  shimmer: ^2.0.0
+  shimmer: ^3.0.0
   video_player: ^2.4.5
 
 dev_dependencies:
